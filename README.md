@@ -2,8 +2,9 @@
 
 Génération infinie d'îles flottantes sur trois niveaux, sans mod (datapack pur, vanilla 1.21.1).
 
-![Vue de dessus](previews/vue_dessus.png)
-![Vue de côté](previews/vue_cote.png)
+![Îles du ciel](previews/iles_ciel.png)
+![Érosion des bords](previews/erosion.png)
+![Vue d'ensemble des trois niveaux](previews/vue_ensemble.png)
 
 ## Installation
 
@@ -19,15 +20,17 @@ Serveur : place le zip dans `world/datapacks/` **avant** la première générati
 
 | Niveau | Hauteur | Contenu |
 |---|---|---|
-| Ciel | ~ y 120 → 380 | Grandes îles exposées au soleil : herbe, arbres, biomes, montagnes, villages, falaises brunes/grises, nuages blancs sur les flancs, cascades |
-| Pierre | ~ y 34 → 110 | Îles de pierre (andésite, tuf) pleines de minerais, pas d'herbe |
-| Deepslate | ~ y -62 → 26 | Îles de deepslate avec minerais profonds (diamant, redstone, or, lapis) |
+| Ciel | ~ y 150 → 440 | Îles au soleil : herbe, arbres, montagnes, villages, lacs, cascades, nuages blancs sur les flancs. Chaque île a son biome (forêt, plaine, désert, taïga, savane, badlands, neige, rivière, plage, mangrove…) |
+| Pierre | ~ y 50 → 142 | Îles de pierre arrondies pleines de minerais ; biomes de caves (lush caves, dripstone caves) |
+| Deepslate | ~ y -62 → 44 | Îles de deepslate arrondies avec les minerais profonds ; parfois du deep dark (sculk) |
 
-- Chaque niveau vit dans sa propre tranche de hauteur : deux îles de niveaux différents **ne peuvent jamais se toucher**.
-- Forme des îles : plateau sur le dessus, falaise sur le bord, puis un cône inversé avec des stalactites et de grosses masses rocheuses pendantes.
-- Le monde fait 448 blocs de haut (-64 → 383).
-- Le spawn est toujours choisi sur une île du ciel.
+- **Hauteurs différentes** : les masses de terre sont cassées le long de lignes de fracture sinueuses. Chaque morceau devient une île séparée, et passer une fracture change toujours la hauteur : deux îles voisines ne sont jamais au même niveau.
+- **Tailles variées** : des grandes îles, des moyennes, des petites et des rochers flottants.
+- **Îles anciennes** : bord du dessus effrité, encoches, cavités et corniches sur les parois, stries verticales, cône inversé avec stalactites et grosses masses rocheuses pendantes.
+- Deux niveaux différents ne peuvent jamais se toucher (chacun a sa tranche de hauteur).
+- Le monde fait 512 blocs de haut (-64 → 447). Le spawn est toujours sur une île du ciel.
 - Les structures qui n'apparaîtraient que flottantes dans le vide sont désactivées : monuments, épaves, ruines océaniques, portails en ruine océaniques, mineshafts, trial chambers. Les strongholds restent (nécessaires pour l'End) : ils sont tout en bas.
+- Le pack remplace les fichiers des biomes vanilla (pour ajouter nuages et lacs) : il peut ne pas être compatible avec d'autres packs qui modifient les biomes.
 
 ## Modifier la génération
 
@@ -39,13 +42,16 @@ python tools/build_pack.py
 
 Paramètres principaux (dans `LEVELS`) :
 
-- `threshold` : plus haut = îles plus petites et plus espacées.
-- `mask_octave` : taille des îles (-8 = grandes, -7 = moyennes).
-- `base`, `height_var` : altitude du dessus des îles et variation entre îles.
-- `depth_pts` : profondeur du cône sous l'île selon la distance au bord.
-- `spike_pts`, `keel_pts` : longueur des stalactites et des grosses masses pendantes.
+- `threshold` : plus haut = moins d'îles, plus espacées.
+- `small_islands` : quantité de petites et moyennes îles.
+- `frac_width` : largeur du vide entre deux îles cassées par une fracture.
+- `cell_amps` : écart de hauteur entre îles voisines.
+- `base`, `height_var` : altitude moyenne du dessus des îles.
+- `rim_pts` : forme du dessus (plat ou arrondi en dôme).
+- `depth_pts`, `spike_pts`, `keel_pts` : profondeur du cône, stalactites, grosses masses pendantes.
+- `erosion`, `ledges`, `streaks` : force de l'érosion des parois.
 - `mountains` : hauteur des montagnes sur les îles du ciel.
 
-Les nuages se règlent dans la section "Clouds" (`cloud_placed`), et les structures désactivées dans la boucle `has_structure`.
+Les nuages se règlent dans la section "Clouds" (`cloud_placed`), les lacs avec `lake_placed`, et les structures désactivées dans la boucle `has_structure`.
 
 `tools/render.py` fait des images d'aperçu d'un monde déjà généré (`python tools/render.py <dossier_du_monde> <dossier_sortie>`, nécessite numpy et Pillow).

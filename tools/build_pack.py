@@ -14,40 +14,50 @@ DATA = os.path.join(ROOT, "data")
 NS = "iles"
 
 # ---------------------------------------------------------------------------
-# World height: -64 .. 383 (448 blocks) to give room for three island levels.
+# World height: -64 .. 447 (512 blocks) to give room for three island levels.
 # ---------------------------------------------------------------------------
 MIN_Y = -64
-HEIGHT = 448
+HEIGHT = 512
 
 # ---------------------------------------------------------------------------
 # Island levels. Each level lives in its own vertical band [floor, cap], and
 # the bands never overlap, so islands of different levels can never touch.
 #   a = sky level (grass, trees, villages)  b = stone level  c = deepslate level
+#
+# Inside a level, land masses are broken along winding "fracture" lines (where
+# one of three noises crosses zero). Every piece becomes its own island, and
+# crossing a fracture always changes the height (+-cell_amps), so two
+# neighbouring islands are never at the same height.
 # ---------------------------------------------------------------------------
 LEVELS = {
     "a": dict(
-        floor=118, cap=380,
-        base=252, height_var=20, roll=3.0,
+        floor=150, cap=440,
+        base=285, cell_amps=[28.0, 18.0, 10.0], height_var=10, roll=3.0,
         mask_octave=-8, mask_amps=[1.0, 0.8, 0.45, 0.25, 0.1],
-        warp=70.0, threshold=0.28,
-        edge_k=260.0,               # e -> roughly "blocks from the rim"
-        thick0=9.0,                 # cliff height at the rim before the cone starts
-        depth_pts=[(0.0, 0.0), (0.03, 6.0), (0.08, 17.0), (0.15, 33.0),
-                   (0.25, 54.0), (0.4, 80.0), (0.6, 108.0, 100.0)],
+        small_islands=0.35,          # extra small/medium islands
+        warp=70.0, threshold=0.19,
+        frac_octave=-8, frac_k=1.5, frac_width=0.05,
+        edge_k=200.0,                # e -> roughly "blocks from the rim"
+        thick0=9.0,                  # cliff height at the rim before the cone starts
+        depth_pts=[(0.0, 0.0), (0.03, 7.0), (0.08, 19.0), (0.15, 36.0),
+                   (0.25, 58.0), (0.4, 84.0), (0.6, 110.0, 100.0)],
         depth_var=0.3,
         spike_pts=[(0.08, 0.0), (0.25, 8.0), (0.4, 22.0), (0.6, 45.0), (0.9, 70.0, 60.0)],
         spike_size=[(0.0, 0.15), (0.04, 0.5), (0.15, 1.0)],
         keel_pts=[(0.0, 0.0), (0.2, 12.0), (0.45, 40.0), (0.8, 80.0, 80.0)],
         keel_size=[(0.0, 0.0), (0.06, 0.4), (0.25, 1.0)],
-        rim_pts=[(0.0, -4.0), (0.015, -1.0), (0.05, 1.5), (0.2, 4.0), (0.6, 6.0)],
+        # crumbled rim: the top drops a few blocks near the edge
+        rim_pts=[(0.0, -6.0), (0.01, -3.0), (0.035, 0.0), (0.12, 3.0), (0.5, 5.0)],
         mountains=60.0,
-        detail=3.5,
+        streaks=3.5, erosion=7.0, ledges=5.0,
     ),
     "b": dict(
-        floor=34, cap=110,
-        base=94, height_var=7, roll=2.0,
+        floor=50, cap=142,
+        base=98, cell_amps=[12.0, 8.0, 5.0], height_var=4, roll=1.5,
         mask_octave=-7, mask_amps=[1.0, 0.8, 0.45, 0.25],
-        warp=40.0, threshold=0.34,
+        small_islands=0.3,
+        warp=40.0, threshold=0.27,
+        frac_octave=-7, frac_k=1.2, frac_width=0.05,
         edge_k=150.0,
         thick0=5.0,
         depth_pts=[(0.0, 0.0), (0.03, 4.0), (0.08, 11.0), (0.15, 20.0),
@@ -57,15 +67,18 @@ LEVELS = {
         spike_size=[(0.0, 0.2), (0.04, 0.6), (0.12, 1.0)],
         keel_pts=[(0.0, 0.0), (0.25, 6.0), (0.5, 16.0), (0.8, 26.0, 20.0)],
         keel_size=[(0.0, 0.0), (0.06, 0.5), (0.2, 1.0)],
-        rim_pts=[(0.0, -3.0), (0.02, 0.0), (0.1, 2.0), (0.5, 3.0)],
+        # rounded (dome) tops
+        rim_pts=[(0.0, -7.0), (0.02, -3.0), (0.06, 2.0), (0.12, 7.0), (0.25, 11.0), (0.5, 14.0, 4.0)],
         mountains=0.0,
-        detail=3.0,
+        streaks=3.0, erosion=5.0, ledges=3.5,
     ),
     "c": dict(
-        floor=-62, cap=26,
-        base=12, height_var=7, roll=2.0,
+        floor=-62, cap=44,
+        base=4, cell_amps=[12.0, 8.0, 5.0], height_var=4, roll=1.5,
         mask_octave=-7, mask_amps=[1.0, 0.8, 0.45, 0.25],
-        warp=40.0, threshold=0.34,
+        small_islands=0.3,
+        warp=40.0, threshold=0.27,
+        frac_octave=-7, frac_k=1.2, frac_width=0.05,
         edge_k=150.0,
         thick0=5.0,
         depth_pts=[(0.0, 0.0), (0.03, 4.0), (0.08, 12.0), (0.15, 22.0),
@@ -75,14 +88,18 @@ LEVELS = {
         spike_size=[(0.0, 0.2), (0.04, 0.6), (0.12, 1.0)],
         keel_pts=[(0.0, 0.0), (0.25, 6.0), (0.5, 16.0), (0.8, 26.0, 20.0)],
         keel_size=[(0.0, 0.0), (0.06, 0.5), (0.2, 1.0)],
-        rim_pts=[(0.0, -3.0), (0.02, 0.0), (0.1, 2.0), (0.5, 3.0)],
+        rim_pts=[(0.0, -7.0), (0.02, -3.0), (0.06, 2.0), (0.12, 7.0), (0.25, 11.0), (0.5, 14.0, 4.0)],
         mountains=0.0,
-        detail=3.0,
+        streaks=3.0, erosion=5.0, ledges=3.5,
     ),
 }
 
 # Small floating rocks between the big sky islands.
-ISLETS = dict(base=236, height_var=50, gap=0.07)
+ISLETS = dict(base=300, height_var=70, gap=0.07)
+
+# Height bands used by biomes / surface rules
+SKY_FROM = 146
+STONE_FROM = 46
 
 # Final density is scaled down so structures' terrain adaptation (beardifier)
 # keeps roughly the same strength as in vanilla.
@@ -186,27 +203,46 @@ Y = "minecraft:y"
 # Island levels
 # ---------------------------------------------------------------------------
 detail_noise = noise_def("detail", -4, [1.0, 0.6, 0.3])
+erode_noise = noise_def("erosion", -4, [1.0, 0.6, 0.25])
+ledge_noise = noise_def("ledges", -5, [1.0, 0.5])
+fine_noise = noise_def("erosion_fine", -3, [1.0, 0.5])
 
 
 def build_level(k, p):
     mask_n = noise_def(f"{k}/mask", p["mask_octave"], p["mask_amps"])
+    small_n = noise_def(f"{k}/mask_small", p["mask_octave"] + 2, [1.0, 0.5])
+    coast_n = noise_def(f"{k}/coast", -5, [1.0, 0.6, 0.3])
     warpx_n = noise_def(f"{k}/warp_x", p["mask_octave"] + 2, [1.0, 0.5])
     warpz_n = noise_def(f"{k}/warp_z", p["mask_octave"] + 2, [1.0, 0.5])
-    height_n = noise_def(f"{k}/height", -8, [1.0, 0.4])
+    fracw_n = noise_def(f"{k}/frac_width", -6, [1.0])
+    height_n = noise_def(f"{k}/height", -7, [1.0, 0.4])
     roll_n = noise_def(f"{k}/roll", -6, [1.0, 0.5])
     depthv_n = noise_def(f"{k}/depth_var", -6, [1.0, 0.5])
     spike_n = noise_def(f"{k}/spike", -4, [1.0, 0.5, 0.2])
     keel_n = noise_def(f"{k}/keel", -6, [1.0, 0.4])
 
+    # three fracture noises; their zero lines cut the land into separate islands
+    fr = []
+    for i in range(3):
+        n = noise_def(f"{k}/fracture_{i}", p["frac_octave"], [1.0, 0.5, 0.2])
+        fr.append(df(f"{k}/fracture_{i}", flat(noise2d(n))))
+    # side_i = which side of fracture i we are on (-1 / +1), constant inside an island
+    side = [df(f"{k}/side_{i}", flat(clamp(mul(f, 40.0), -1.0, 1.0))) for i, f in enumerate(fr)]
+    gap = dmin(dmin(dabs(fr[0]), dabs(fr[1])), dabs(fr[2]))
+    gap_w = mul(p["frac_width"], add(1.0, mul(noise2d(fracw_n), 0.6)))
+
     # e = how far inside an island we are (0 at the rim, > 0 inside, < 0 in the void)
-    e = df(f"{k}/e", flat(add(
-        shifted2d(mask_n, mul(noise2d(warpx_n), p["warp"]), mul(noise2d(warpz_n), p["warp"])),
-        -p["threshold"])))
+    land = add(add(shifted2d(mask_n, mul(noise2d(warpx_n), p["warp"]), mul(noise2d(warpz_n), p["warp"])),
+                   mul(noise2d(small_n), p["small_islands"])),
+               add(mul(noise2d(coast_n), 0.035), -p["threshold"]))
+    e = df(f"{k}/e", flat(dmin(land, add(mul(gap, p["frac_k"]), neg(gap_w)))))
 
     spike_raw = df(f"{k}/spike_raw", flat(noise2d(spike_n)))
 
     # --- top surface -------------------------------------------------------
-    top_base = add(add(p["base"], mul(noise2d(height_n), p["height_var"])),
+    ca = p["cell_amps"]
+    cell_h = add(add(mul(side[0], ca[0]), mul(side[1], ca[1])), mul(side[2], ca[2]))
+    top_base = add(add(add(p["base"], cell_h), mul(noise2d(height_n), p["height_var"])),
                    add(mul(noise2d(roll_n), p["roll"]), spline(e, p["rim_pts"])))
     top_base = df(f"{k}/top_base", flat(top_base))
 
@@ -226,10 +262,9 @@ def build_level(k, p):
     depth = add(p["thick0"], mul(spline(e, p["depth_pts"]),
                                  add(1.0, mul(noise2d(depthv_n), p["depth_var"]))))
     spikes = mul(spline(spike_raw, p["spike_pts"]), spline(e, p["spike_size"]))
-    if "keel_pts" in p:
-        # a few big hanging rock masses (inverted mountains) under large islands
-        keel_raw = df(f"{k}/keel_raw", flat(noise2d(keel_n)))
-        spikes = add(spikes, mul(spline(keel_raw, p["keel_pts"]), spline(e, p["keel_size"])))
+    # a few big hanging rock masses (inverted mountains) under large islands
+    keel_raw = df(f"{k}/keel_raw", flat(noise2d(keel_n)))
+    spikes = add(spikes, mul(spline(keel_raw, p["keel_pts"]), spline(e, p["keel_size"])))
     bottom_raw = df(f"{k}/bottom_raw", flat(add(top_base, neg(add(depth, spikes)))))
     # soft floor: deep bottoms get squashed smoothly instead of being cut flat
     f0 = float(p["floor"])
@@ -239,11 +274,22 @@ def build_level(k, p):
     edge = df(f"{k}/edge", interp(flat(mul(e, p["edge_k"]))))
 
     # --- 3D density -------------------------------------------------------
-    shape = dmin(dmin(add(top, neg(Y)), add(Y, neg(bottom))), edge)
+    below_top = add(top, neg(Y))
+    shape = dmin(dmin(below_top, add(Y, neg(bottom))), edge)
     # vertical streaks on cliffs and spikes, faded out near the grass top
     streaks = mul(interp(noise3d(detail_noise, 1.0, 0.25)),
-                  mul(clamp(mul(add(top, neg(Y)), 0.2), 0.0, 1.0), p["detail"]))
-    return df(f"{k}/density", add(shape, streaks))
+                  mul(clamp(mul(below_top, 0.2), 0.0, 1.0), p["streaks"]))
+    # old, weathered rock: notches, holes and horizontal ledges on every wall and
+    # underside (noise only matters close to a surface), plus extra crumbling
+    # along the rim, also biting a little into the grass edge
+    rimness = spline(edge, [(-8.0, 0.0), (0.0, 0.75), (4.0, 1.0), (14.0, 0.4), (26.0, 0.0)])
+    erode = interp(noise3d(erode_noise, 1.0, 1.0))
+    weather = add(add(mul(erode, p["erosion"]),
+                      mul(interp(noise3d(ledge_noise, 0.4, 2.0)), p["ledges"])),
+                  add(mul(interp(noise3d(fine_noise, 1.0, 1.0)), p["erosion"] * 0.45),
+                      mul(mul(erode, rimness), p["erosion"] * 0.6)))
+    weather = mul(weather, clamp(add(mul(below_top, 0.35), 0.3), 0.0, 1.0))
+    return df(f"{k}/density", add(add(shape, streaks), weather))
 
 
 level_density = {k: build_level(k, p) for k, p in LEVELS.items()}
@@ -271,22 +317,46 @@ final = dmax(dmax(level_density["a"], level_density["b"]),
 final_density = df("final_density", mul(final, DENSITY_SCALE))
 
 # ---------------------------------------------------------------------------
-# Climate (biomes). Continentalness follows the sky islands so that:
+# Climate (biomes).
+# Each sky island gets its own climate from the fracture sides (side_0..2),
+# mixed with a bit of the vanilla climate, so neighbouring islands get
+# different biomes: forest, plains, desert, taiga, river, beach, ocean...
+# Continentalness also follows the sky islands so that:
 #  - the world spawn is always found on a sky island,
-#  - bigger islands get "inland" biomes (forests, mountains...).
-# Depth stays at "surface" values everywhere so the lower levels do not turn
-# into lush caves (water pools, moss) or deep dark (sculk): they stay plain
-# stone / deepslate full of ores.
+#  - the void around islands is "ocean" (no village floating in the void).
+# Depth: the stone level gets cave biomes (lush caves, dripstone caves) when the
+# climate allows it, the deepslate level can also get the deep dark.
 # ---------------------------------------------------------------------------
-continents = df("climate/continents", flat(clamp(mul(add(ref("a/e"), -0.012), 7.0), -1.0, 1.0)))
+S0, S1, S2 = ref("a/side_0"), ref("a/side_1"), ref("a/side_2")
+
+
+def vanilla_shifted(noise, scale):
+    return {"type": "minecraft:shifted_noise", "noise": noise, "shift_x": "minecraft:shift_x",
+            "shift_y": 0.0, "shift_z": "minecraft:shift_z", "xz_scale": scale, "y_scale": 0.0}
+
+
+temperature = df("climate/temperature", flat(add(
+    mul(vanilla_shifted("minecraft:temperature", 0.5), 0.5),
+    add(mul(S0, 0.32), mul(mul(S1, S2), -0.24)))))
+vegetation = df("climate/vegetation", flat(add(
+    mul(vanilla_shifted("minecraft:vegetation", 0.5), 0.5),
+    add(mul(S1, 0.32), mul(mul(S0, S2), 0.24)))))
+erosion = df("climate/erosion", flat(add(
+    mul("minecraft:overworld/erosion", 0.5), add(mul(S2, 0.35), mul(mul(S0, S1), -0.2)))))
+ridges = df("climate/ridges", flat(add(
+    mul("minecraft:overworld/ridges", 0.6), mul(mul(S0, S1), 0.3))))
+# some islands are coast / ocean islands (beaches, lakes), most are inland
+cell_cont = add(add(0.3, mul(mul(S2, S0), 0.32)), mul("minecraft:overworld/continents", 0.35))
+continents = df("climate/continents", flat(dmin(
+    clamp(mul(add(ref("a/e"), -0.012), 7.0), -1.0, 1.0), cell_cont)))
 depth = df("climate/depth", {
     "type": "minecraft:range_choice", "input": Y,
-    "min_inclusive": 130.0, "max_exclusive": 10000.0,
+    "min_inclusive": float(SKY_FROM), "max_exclusive": 10000.0,
     "when_in_range": 0.0,
     "when_out_of_range": {
         "type": "minecraft:range_choice", "input": Y,
-        "min_inclusive": 30.0, "max_exclusive": 130.0,
-        "when_in_range": 0.0, "when_out_of_range": 1.0}})
+        "min_inclusive": float(STONE_FROM), "max_exclusive": float(SKY_FROM),
+        "when_in_range": 0.5, "when_out_of_range": 1.06}})
 
 # ---------------------------------------------------------------------------
 # Surface rules
@@ -348,10 +418,15 @@ RED_SAND = block("minecraft:red_sand")
 DEEPSLATE = block("minecraft:deepslate", {"axis": "y"})
 
 SNOWY_PEAKS = biome("frozen_peaks", "jagged_peaks", "snowy_slopes", "ice_spikes")
+WATERY = ["ocean", "deep_ocean", "cold_ocean", "deep_cold_ocean", "lukewarm_ocean", "deep_lukewarm_ocean",
+          "warm_ocean", "frozen_ocean", "deep_frozen_ocean", "river", "frozen_river", "beach", "snowy_beach"]
+SANDY = biome(*WATERY)
 BADLANDS = biome("badlands", "eroded_badlands", "wooded_badlands")
 
 top_block = seq(
     cond(biome("desert"), SAND),
+    cond(SANDY, seq(cond(noise_th("minecraft:surface", 0.35, 10.0), block("minecraft:gravel")), SAND)),
+    cond(biome("stony_shore"), seq(cond(noise_th("minecraft:surface", 0.0, 10.0), block("minecraft:gravel")), STONE)),
     cond(BADLANDS, RED_SAND),
     cond(biome("mushroom_fields"), block("minecraft:mycelium", {"snowy": "false"})),
     cond(biome("mangrove_swamp"), block("minecraft:mud")),
@@ -367,6 +442,7 @@ top_block = seq(
 
 under_block = seq(
     cond(biome("desert"), SANDSTONE),
+    cond(SANDY, SAND),
     cond(BADLANDS, block("minecraft:orange_terracotta")),
     cond(SNOWY_PEAKS, SNOW),
     cond(biome("stony_peaks"), block("minecraft:calcite")),
@@ -402,19 +478,28 @@ sky_level = seq(
 )
 
 stone_level = seq(
+    cond(biome("lush_caves"), seq(
+        cond(floor_depth(0), block("minecraft:moss_block")),
+        cond(floor_depth(1), seq(cond(noise_th(ref("dirt_band"), 0.0, 10.0), block("minecraft:moss_block")),
+                                 block("minecraft:clay"))))),
+    cond(biome("dripstone_caves"), seq(
+        cond(noise_th(ref("strata"), -0.2, 0.3), block("minecraft:dripstone_block")))),
     cond(noise_th(ref("strata"), 0.55, 10.0), block("minecraft:andesite")),
     cond(noise_th(ref("strata"), -10.0, -0.65), block("minecraft:tuff")),
     STONE,
 )
 
 deep_level = seq(
+    cond(biome("deep_dark"), cond(floor_depth(0), seq(
+        cond(noise_th(ref("dirt_band"), -0.1, 10.0), block("minecraft:sculk"))))),
+    cond(biome("lush_caves"), cond(floor_depth(0), block("minecraft:moss_block"))),
     cond(noise_th(ref("strata"), 0.6, 10.0), block("minecraft:tuff")),
     DEEPSLATE,
 )
 
 surface_rule = seq(
-    cond(y_above(130), sky_level),
-    cond(y_above(30), stone_level),
+    cond(y_above(SKY_FROM), sky_level),
+    cond(y_above(STONE_FROM), stone_level),
     deep_level,
 )
 
@@ -461,16 +546,12 @@ noise_settings = {
         "fluid_level_floodedness": 0.0,
         "fluid_level_spread": 0.0,
         "lava": 0.0,
-        "temperature": {"type": "minecraft:shifted_noise", "noise": "minecraft:temperature",
-                        "shift_x": "minecraft:shift_x", "shift_y": 0.0, "shift_z": "minecraft:shift_z",
-                        "xz_scale": 0.25, "y_scale": 0.0},
-        "vegetation": {"type": "minecraft:shifted_noise", "noise": "minecraft:vegetation",
-                       "shift_x": "minecraft:shift_x", "shift_y": 0.0, "shift_z": "minecraft:shift_z",
-                       "xz_scale": 0.25, "y_scale": 0.0},
+        "temperature": temperature,
+        "vegetation": vegetation,
         "continents": continents,
-        "erosion": "minecraft:overworld/erosion",
+        "erosion": erosion,
         "depth": depth,
-        "ridges": "minecraft:overworld/ridges",
+        "ridges": ridges,
         "initial_density_without_jaggedness": 0.0,
         "final_density": final_density,
         **veins,
@@ -536,24 +617,53 @@ def cloud_placed(name, feature, count, y0, y1, dist):
     return ref(name)
 
 
-cloud_feature("cloud_blob", "minecraft:white_wool", 48)
-cloud_feature("cloud_snow_blob", "minecraft:snow_block", 32)
+cloud_feature("cloud_blob", "minecraft:white_wool", 36)
+cloud_feature("cloud_snow_blob", "minecraft:snow_block", 26)
 # one cloud = a cluster of blobs spread horizontally
 put(f"{NS}/worldgen/configured_feature/cloud.json", {
     "type": "minecraft:random_patch",
-    "config": {"tries": 32, "xz_spread": 12, "y_spread": 2, "feature": {
+    "config": {"tries": 26, "xz_spread": 6, "y_spread": 2, "feature": {
         "feature": {"type": "minecraft:random_selector", "config": {
             "features": [{"chance": 0.3, "feature": {"feature": ref("cloud_snow_blob"), "placement": []}}],
             "default": {"feature": ref("cloud_blob"), "placement": []}}},
         "placement": []}}})
-CLOUD_PLACED = [cloud_placed("cloud", "cloud", 3, 176, 226, 3)]
+CLOUD_PLACED = [cloud_placed("cloud", "cloud", 5, 215, 275, 3)]
+
+# Lakes / ponds on top of the sky islands. The vanilla lake feature refuses to
+# spill over an edge, so lakes never pour into the void. Water islands (ocean,
+# river, beach, swamp biomes) get many of them, the others only a few.
+put(f"{NS}/worldgen/configured_feature/lake.json", {
+    "type": "minecraft:lake",
+    "config": {"fluid": {"type": "minecraft:simple_state_provider",
+                         "state": {"Name": "minecraft:water", "Properties": {"level": "0"}}},
+               "barrier": {"type": "minecraft:simple_state_provider", "state": {"Name": "minecraft:stone"}}}})
+
+
+def lake_placed(name, extra):
+    put(f"{NS}/worldgen/placed_feature/{name}.json", {
+        "feature": ref("lake"),
+        # no in_square on purpose: the lake spans 16x16 blocks from its origin, and
+        # it must stay inside the area the game lets a feature touch
+        "placement": extra + [
+            {"type": "minecraft:heightmap", "heightmap": "WORLD_SURFACE_WG"},
+            {"type": "minecraft:biome"}]})
+    return ref(name)
+
+
+LAKE_RARE = lake_placed("lake_rare", [{"type": "minecraft:rarity_filter", "chance": 7}])
+LAKE_WET = lake_placed("lake_wet", [])
+WET_BIOMES = set(WATERY) | {"swamp", "mangrove_swamp"}
 
 for fn in sorted(os.listdir(VANILLA_BIOMES)):
     b = json.load(open(os.path.join(VANILLA_BIOMES, fn), encoding="utf-8"))
     feats = b.get("features", [])
     while len(feats) < 1:
         feats.append([])
+    while len(feats) < 2:
+        feats.append([])
     feats[0] = list(feats[0]) + CLOUD_PLACED
+    lakes = [LAKE_RARE] + ([LAKE_WET] if fn[:-5] in WET_BIOMES else [])
+    feats[1] = list(feats[1]) + lakes
     b["features"] = feats
     put(f"minecraft/worldgen/biome/{fn}", b)
 

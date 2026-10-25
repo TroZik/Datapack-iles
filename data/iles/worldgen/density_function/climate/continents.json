@@ -1,17 +1,41 @@
 {
   "type": "minecraft:flat_cache",
   "argument": {
-    "type": "minecraft:clamp",
-    "input": {
-      "type": "minecraft:mul",
+    "type": "minecraft:min",
+    "argument1": {
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": "iles:a/e",
+          "argument2": -0.012
+        },
+        "argument2": 7.0
+      },
+      "min": -1.0,
+      "max": 1.0
+    },
+    "argument2": {
+      "type": "minecraft:add",
       "argument1": {
         "type": "minecraft:add",
-        "argument1": "iles:a/e",
-        "argument2": -0.012
+        "argument1": 0.3,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": "iles:a/side_2",
+            "argument2": "iles:a/side_0"
+          },
+          "argument2": 0.32
+        }
       },
-      "argument2": 7.0
-    },
-    "min": -1.0,
-    "max": 1.0
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": "minecraft:overworld/continents",
+        "argument2": 0.35
+      }
+    }
   }
 }

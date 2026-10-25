@@ -24,32 +24,32 @@
                   },
                   {
                     "location": 0.03,
-                    "value": 6.0,
-                    "derivative": 212.5
+                    "value": 7.0,
+                    "derivative": 237.5
                   },
                   {
                     "location": 0.08,
-                    "value": 17.0,
-                    "derivative": 225.0
+                    "value": 19.0,
+                    "derivative": 241.66666666666669
                   },
                   {
                     "location": 0.15,
-                    "value": 33.0,
-                    "derivative": 217.64705882352942
+                    "value": 36.0,
+                    "derivative": 229.41176470588238
                   },
                   {
                     "location": 0.25,
-                    "value": 54.0,
-                    "derivative": 188.0
+                    "value": 58.0,
+                    "derivative": 192.0
                   },
                   {
                     "location": 0.4,
-                    "value": 80.0,
-                    "derivative": 154.2857142857143
+                    "value": 84.0,
+                    "derivative": 148.57142857142858
                   },
                   {
                     "location": 0.6,
-                    "value": 108.0,
+                    "value": 110.0,
                     "derivative": 100.0
                   }
                 ]

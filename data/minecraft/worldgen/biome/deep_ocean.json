@@ -25,7 +25,9 @@
     ],
     [
       "minecraft:lake_lava_underground",
-      "minecraft:lake_lava_surface"
+      "minecraft:lake_lava_surface",
+      "iles:lake_rare",
+      "iles:lake_wet"
     ],
     [
       "minecraft:amethyst_geode"

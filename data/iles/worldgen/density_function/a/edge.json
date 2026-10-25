@@ -5,7 +5,7 @@
     "argument": {
       "type": "minecraft:mul",
       "argument1": "iles:a/e",
-      "argument2": 260.0
+      "argument2": 200.0
     }
   }
 }

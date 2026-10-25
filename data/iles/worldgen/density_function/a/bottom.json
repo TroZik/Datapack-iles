@@ -8,18 +8,18 @@
         "coordinate": "iles:a/bottom_raw",
         "points": [
           {
-            "location": 38.0,
-            "value": 119.0,
+            "location": 70.0,
+            "value": 151.0,
             "derivative": 0.0
           },
           {
-            "location": 108.0,
-            "value": 127.0,
+            "location": 140.0,
+            "value": 159.0,
             "derivative": 0.2571428571428571
           },
           {
-            "location": 143.0,
-            "value": 146.0,
+            "location": 175.0,
+            "value": 178.0,
             "derivative": 1.0
           }
         ]

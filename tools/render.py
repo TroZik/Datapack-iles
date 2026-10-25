@@ -264,7 +264,8 @@ def render_view(vol, names, azimuth_deg, elev_deg, out, scale=1.0):
     v = -(p @ up)
     u = ((u - u.min()) * scale).astype(np.int32)
     v = ((v - v.min()) * scale).astype(np.int32)
-    W, Hh = u.max() + 3, v.max() + 3
+    k = int(math.ceil(scale)) + 1
+    W, Hh = u.max() + k + 1, v.max() + k + 1
     dn = (depth - depth.min()) / (np.ptp(depth) + 1e-6)
     fog = (dn ** 1.2 * 0.75)[:, None]
     grad = np.linspace(0, 1, Hh)[:, None]
@@ -274,8 +275,8 @@ def render_view(vol, names, azimuth_deg, elev_deg, out, scale=1.0):
     col = col * (1 - fog) + fogc * fog
     order = np.argsort(-depth)
     u, v, col = u[order], v[order], col[order]
-    for oy in range(2):
-        for ox in range(2):
+    for oy in range(k):
+        for ox in range(k):
             img[v + oy, u + ox] = col
     Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).save(out)
 

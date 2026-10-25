@@ -29,7 +29,9 @@
     [
       "iles:cloud"
     ],
-    [],
+    [
+      "iles:lake_rare"
+    ],
     [
       "minecraft:amethyst_geode"
     ],
