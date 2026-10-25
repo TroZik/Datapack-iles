@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:noise",
+        "noise": "iles:islet/mask",
+        "xz_scale": 1.0,
+        "y_scale": 0.0
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:noise",
+          "noise": "iles:islet/sel",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        },
+        "argument2": 0.5
+      }
+    },
+    "argument2": -0.78
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:interpolated",
+  "argument": {
+    "type": "minecraft:flat_cache",
+    "argument": {
+      "type": "minecraft:min",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": "iles:islet/e",
+        "argument2": 120.0
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": "iles:a/e",
+            "argument2": -1.0
+          },
+          "argument2": -0.07
+        },
+        "argument2": 160.0
+      }
+    }
+  }
+}

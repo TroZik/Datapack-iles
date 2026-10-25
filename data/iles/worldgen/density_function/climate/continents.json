@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:clamp",
+    "input": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": "iles:a/e",
+        "argument2": -0.012
+      },
+      "argument2": 7.0
+    },
+    "min": -1.0,
+    "max": 1.0
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:interpolated",
+  "argument": {
+    "type": "minecraft:flat_cache",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": 236,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:noise",
+            "noise": "iles:islet/height",
+            "xz_scale": 1.0,
+            "y_scale": 0.0
+          },
+          "argument2": 50
+        }
+      },
+      "argument2": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": "iles:islet/e",
+          "points": [
+            {
+              "location": 0.0,
+              "value": -1.0,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.1,
+              "value": 1.0,
+              "derivative": 0.0
+            }
+          ]
+        }
+      }
+    }
+  }
+}
