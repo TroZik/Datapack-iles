@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:interpolated",
+  "argument": {
+    "type": "minecraft:flat_cache",
+    "argument": {
+      "type": "minecraft:mul",
+      "argument1": "iles:c/e",
+      "argument2": 150.0
+    }
+  }
+}

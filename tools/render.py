@@ -135,7 +135,7 @@ def is_transparent(name):
 # ---------------------------------------------------------------- world ----
 
 
-def load_world(world, radius):
+def load_world(world, radius, cx=0, cz=0):
     names = ["minecraft:air"]
     index = {"minecraft:air": 0}
     size = radius * 2
@@ -154,9 +154,9 @@ def load_world(world, radius):
             off = int.from_bytes(data[i * 4:i * 4 + 3], "big")
             if off == 0:
                 continue
-            cx = rx * 32 + (i % 32)
-            cz = rz * 32 + (i // 32)
-            bx, bz = cx * 16 + radius, cz * 16 + radius
+            ccx = rx * 32 + (i % 32)
+            ccz = rz * 32 + (i // 32)
+            bx, bz = ccx * 16 + radius - cx, ccz * 16 + radius - cz
             if bx < 0 or bz < 0 or bx + 16 > size or bz + 16 > size:
                 continue
             o = off * 4096

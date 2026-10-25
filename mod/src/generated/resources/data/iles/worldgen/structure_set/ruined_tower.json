@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "iles:ruined_tower",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 16,
+    "separation": 6,
+    "salt": 81734,
+    "exclusion_zone": {
+      "other_set": "iles:ruins",
+      "chunk_count": 4
+    }
+  }
+}

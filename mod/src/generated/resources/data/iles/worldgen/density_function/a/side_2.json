@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:clamp",
+    "input": {
+      "type": "minecraft:mul",
+      "argument1": "iles:a/fracture_2",
+      "argument2": 40.0
+    },
+    "min": -1.0,
+    "max": 1.0
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": 285,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": "iles:a/side_0",
+              "argument2": 28.0
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": "iles:a/side_1",
+              "argument2": 18.0
+            }
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": "iles:a/side_2",
+            "argument2": 10.0
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:noise",
+          "noise": "iles:a/height",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        },
+        "argument2": 10
+      }
+    },
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:noise",
+          "noise": "iles:a/roll",
+          "xz_scale": 1.0,
+          "y_scale": 0.0
+        },
+        "argument2": 3.0
+      },
+      "argument2": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": "iles:a/e",
+          "points": [
+            {
+              "location": 0.0,
+              "value": -6.0,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.01,
+              "value": -3.0,
+              "derivative": 171.42857142857142
+            },
+            {
+              "location": 0.035,
+              "value": 0.0,
+              "derivative": 54.54545454545455
+            },
+            {
+              "location": 0.12,
+              "value": 3.0,
+              "derivative": 10.752688172043012
+            },
+            {
+              "location": 0.5,
+              "value": 5.0,
+              "derivative": 0.0
+            }
+          ]
+        }
+      }
+    }
+  }
+}

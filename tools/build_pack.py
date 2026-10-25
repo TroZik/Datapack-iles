@@ -8,6 +8,9 @@ no mod. Tweak the PARAMS below, run `python tools/build_pack.py`, and the
 import json
 import os
 import shutil
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data")
@@ -668,21 +671,122 @@ for fn in sorted(os.listdir(VANILLA_BIOMES)):
     put(f"minecraft/worldgen/biome/{fn}", b)
 
 # ---------------------------------------------------------------------------
+# New structures: forest cabin, farm, ruins, ruined tower (see structures.py)
+# ---------------------------------------------------------------------------
+import structures as _structures
+
+NEW_STRUCTURES = {
+    # name: (biomes, spacing, separation, salt)
+    "cabin": (["forest", "birch_forest", "dark_forest", "old_growth_birch_forest", "taiga", "snowy_taiga",
+               "old_growth_pine_taiga", "old_growth_spruce_taiga", "flower_forest", "grove", "windswept_forest"],
+              12, 4, 81731),
+    "farm": (["plains", "sunflower_plains", "meadow", "savanna", "flower_forest", "cherry_grove"], 12, 4, 81732),
+    "ruins": (["plains", "forest", "birch_forest", "dark_forest", "taiga", "savanna", "desert", "meadow",
+               "snowy_plains", "swamp", "jungle", "sparse_jungle", "badlands", "wooded_badlands", "flower_forest",
+               "windswept_hills", "snowy_taiga", "savanna_plateau"], 14, 5, 81733),
+    "ruined_tower": (["grove", "snowy_slopes", "meadow", "taiga", "snowy_taiga", "windswept_hills",
+                      "windswept_forest", "windswept_gravelly_hills", "stony_peaks", "old_growth_pine_taiga",
+                      "plains", "savanna_plateau", "jagged_peaks", "frozen_peaks"], 16, 6, 81734),
+}
+
+# Villages: only part of the sky is land, so they are made a bit more frequent
+# than in vanilla (spacing 34 -> 18 chunks).
+put("minecraft/worldgen/structure_set/villages.json", {
+    "placement": {"type": "minecraft:random_spread", "salt": 10387312, "separation": 6, "spacing": 18},
+    "structures": [{"structure": f"minecraft:village_{v}", "weight": 1}
+                   for v in ["plains", "desert", "savanna", "snowy", "taiga"]]})
+
+# Pillager outposts: same idea (vanilla: spacing 32, frequency 0.2)
+put("minecraft/worldgen/structure_set/pillager_outposts.json", {
+    "placement": {"type": "minecraft:random_spread", "salt": 165745296, "separation": 8, "spacing": 22,
+                  "frequency": 0.4, "frequency_reduction_method": "legacy_type_1",
+                  "exclusion_zone": {"chunk_count": 6, "other_set": "minecraft:villages"}},
+    "structures": [{"structure": "minecraft:pillager_outpost", "weight": 1}]})
+
+# keep the new structures away from villages and from each other
+EXCLUDE = {"cabin": "minecraft:villages", "farm": "iles:cabin", "ruins": "iles:farm", "ruined_tower": "iles:ruins"}
+
+for name, (biomes, spacing, separation, salt) in NEW_STRUCTURES.items():
+    put(f"{NS}/structure/{name}.nbt", _structures.STRUCTURES[name]().to_nbt())
+    put(f"{NS}/tags/worldgen/biome/has_structure/{name}.json",
+        {"replace": False, "values": [f"minecraft:{b}" for b in biomes]})
+    put(f"{NS}/worldgen/template_pool/{name}/start.json", {
+        "fallback": "minecraft:empty",
+        "elements": [{"weight": 1, "element": {
+            "element_type": "minecraft:single_pool_element", "location": ref(name),
+            "processors": "minecraft:empty", "projection": "rigid"}}]})
+    put(f"{NS}/worldgen/structure/{name}.json", {
+        "type": "minecraft:jigsaw",
+        "biomes": f"#{NS}:has_structure/{name}",
+        "step": "surface_structures",
+        "spawn_overrides": {},
+        "terrain_adaptation": "beard_thin",
+        "start_pool": ref(f"{name}/start"),
+        "size": 1,
+        "start_height": {"absolute": -1},  # the template's first layer replaces the grass
+        "project_start_to_heightmap": "WORLD_SURFACE_WG",
+        "max_distance_from_center": 80,
+        "use_expansion_hack": False})
+    put(f"{NS}/worldgen/structure_set/{name}.json", {
+        "structures": [{"structure": ref(name), "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": spacing, "separation": separation,
+                      "salt": salt, "exclusion_zone": {"other_set": EXCLUDE[name], "chunk_count": 4}}})
+
+# ---------------------------------------------------------------------------
+# Mod-only files (the NeoForge mod adds support islands under structures)
+#  - final density also takes the support islands ("iles_volantes:structure_support")
+#  - village streets are "rigid" (flat, at the village height) instead of
+#    following the terrain, which would drop them to the bottom of the void.
+#    The support islands then hold up whatever sticks out of the island.
+# ---------------------------------------------------------------------------
+mod_files = {}
+mod_files[f"{NS}/worldgen/density_function/final_density.json"] = mul(
+    dmax(final, {"type": "iles_volantes:structure_support"}), DENSITY_SCALE)
+
+
+def make_rigid(o):
+    if isinstance(o, dict):
+        return {k: ("rigid" if k == "projection" else make_rigid(v)) for k, v in o.items()}
+    if isinstance(o, list):
+        return [make_rigid(v) for v in o]
+    return o
+
+
+VANILLA_POOLS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vanilla_pools")
+for base, _, names in os.walk(VANILLA_POOLS):
+    for n in names:
+        full = os.path.join(base, n)
+        rel = os.path.relpath(full, VANILLA_POOLS).replace(os.sep, "/")
+        mod_files[f"minecraft/worldgen/template_pool/{rel}"] = make_rigid(json.load(open(full, encoding="utf-8")))
+
+# ---------------------------------------------------------------------------
 # Write everything
 # ---------------------------------------------------------------------------
-if os.path.isdir(DATA):
-    shutil.rmtree(DATA)
-for path, obj in files.items():
-    full = os.path.join(DATA, *path.split("/"))
-    os.makedirs(os.path.dirname(full), exist_ok=True)
-    with open(full, "w", encoding="utf-8") as f:
-        json.dump(obj, f, indent=2)
+
+
+def write_tree(root, entries):
+    if os.path.isdir(root):
+        shutil.rmtree(root)
+    for path, obj in entries.items():
+        full = os.path.join(root, *path.split("/"))
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        if isinstance(obj, bytes):
+            with open(full, "wb") as f:
+                f.write(obj)
+        else:
+            with open(full, "w", encoding="utf-8") as f:
+                json.dump(obj, f, indent=2)
+
+
+write_tree(DATA, files)
+MOD_DATA = os.path.join(ROOT, "mod", "src", "generated", "resources", "data")
+write_tree(MOD_DATA, {**files, **mod_files})
 
 with open(os.path.join(ROOT, "pack.mcmeta"), "w", encoding="utf-8") as f:
     json.dump({"pack": {"pack_format": 48,
                         "description": "Iles volantes - generation d'iles flottantes (1.21.1)"}}, f, indent=2)
 
-print(f"wrote {len(files)} files")
+print(f"wrote {len(files)} datapack files, {len(files) + len(mod_files)} mod files")
 
 # Ready-to-install zip (drop it in the "Data Packs" screen when creating a world)
 import zipfile

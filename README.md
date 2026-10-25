@@ -1,12 +1,30 @@
-# Îles volantes — datapack Minecraft 1.21.1
+# Îles volantes — Minecraft 1.21.1 (mod NeoForge ou datapack)
 
-Génération infinie d'îles flottantes sur trois niveaux, sans mod (datapack pur, vanilla 1.21.1).
+Génération infinie d'îles flottantes sur trois niveaux, avec villages et structures posés sur les îles.
 
 ![Îles du ciel](previews/iles_ciel.png)
+![Village sur son île](previews/village.png)
 ![Érosion des bords](previews/erosion.png)
 ![Vue d'ensemble des trois niveaux](previews/vue_ensemble.png)
 
-## Installation
+## Deux versions
+
+| | Mod NeoForge (recommandé) | Datapack seul |
+|---|---|---|
+| Fichier | `dist/iles_volantes-1.1.0.jar` | `dist/Iles-Volantes-1.21.1.zip` |
+| Îles, biomes, érosion, nuages, lacs | ✅ | ✅ |
+| Nouvelles structures (cabane, ferme, ruines, tour) | ✅ | ✅ |
+| **Îles support** sous les villages et structures | ✅ | ❌ (les bouts qui dépassent flottent dans le vide) |
+| Villages à plat sur leur île | ✅ | ❌ (les rues suivent le terrain et peuvent tomber dans le vide) |
+| À installer | NeoForge 1.21.1 (client et serveur) | rien |
+
+## Installation du mod (recommandé)
+
+1. Installe **NeoForge 1.21.1** (version 21.1.265 ou plus récente) depuis https://neoforged.net.
+2. Copie `dist/iles_volantes-1.1.0.jar` dans le dossier `mods` (client, et serveur si tu en as un).
+3. Crée un **nouveau monde** avec le type **Par défaut**. Pas besoin d'ajouter le datapack : il est inclus dans le mod.
+
+## Installation du datapack seul
 
 1. Prends `dist/Iles-Volantes-1.21.1.zip`.
 2. Minecraft 1.21.1 → **Créer un nouveau monde** → **Plus** → **Packs de données** → glisse le zip dans la fenêtre et active-le.
@@ -29,6 +47,8 @@ Serveur : place le zip dans `world/datapacks/` **avant** la première générati
 - **Îles anciennes** : bord du dessus effrité, encoches, cavités et corniches sur les parois, stries verticales, cône inversé avec stalactites et grosses masses rocheuses pendantes.
 - Deux niveaux différents ne peuvent jamais se toucher (chacun a sa tranche de hauteur).
 - Le monde fait 512 blocs de haut (-64 → 447). Le spawn est toujours sur une île du ciel.
+- **Structures** : villages, avant-postes de pillards, temples… apparaissent sur les îles du ciel. Avec le mod, chaque morceau de structure qui dépasse du bord (maison, rue, tour) reçoit en dessous une **île support** en roche, avec cône et stalactites comme les îles naturelles. Elle relie aussi les morceaux d'un village posé sur deux îles voisines.
+- **Nouvelles structures** : cabane forestière (forêts, taïgas), ferme avec champ irrigué, cabane et épouvantail (plaines, savane, prairies), ruines avec arche et coffre (presque partout), tour en ruine avec étages effondrés et coffre en haut (montagnes, taïgas, collines). Les villages et avant-postes sont un peu plus fréquents qu'en vanilla, car seule une partie du ciel est de la terre.
 - Les structures qui n'apparaîtraient que flottantes dans le vide sont désactivées : monuments, épaves, ruines océaniques, portails en ruine océaniques, mineshafts, trial chambers. Les strongholds restent (nécessaires pour l'End) : ils sont tout en bas.
 - Le pack remplace les fichiers des biomes vanilla (pour ajouter nuages et lacs) : il peut ne pas être compatible avec d'autres packs qui modifient les biomes.
 
@@ -52,6 +72,14 @@ Paramètres principaux (dans `LEVELS`) :
 - `erosion`, `ledges`, `streaks` : force de l'érosion des parois.
 - `mountains` : hauteur des montagnes sur les îles du ciel.
 
-Les nuages se règlent dans la section "Clouds" (`cloud_placed`), les lacs avec `lake_placed`, et les structures désactivées dans la boucle `has_structure`.
+Les nuages se règlent dans la section "Clouds" (`cloud_placed`), les lacs avec `lake_placed`, les nouvelles structures dans `NEW_STRUCTURES` (biomes et fréquence ; leur forme est dans `tools/structures.py`), et les structures désactivées dans la boucle `has_structure`.
+
+Le script écrit à la fois le datapack (`data/`) et les données du mod (`mod/src/generated/resources/data/`). Pour recompiler le mod ensuite (Java 21) :
+
+```bash
+cd mod && ./gradlew build
+```
+
+Le jar sort dans `mod/build/libs/`. Le code des îles support est dans `mod/src/main/java/com/trozik/iles/StructureSupport.java` (taille, profondeur du cône, stalactites).
 
 `tools/render.py` fait des images d'aperçu d'un monde déjà généré (`python tools/render.py <dossier_du_monde> <dossier_sortie>`, nécessite numpy et Pillow).

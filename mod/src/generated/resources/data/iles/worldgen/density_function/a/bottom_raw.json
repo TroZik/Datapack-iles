@@ -1,0 +1,194 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": "iles:a/top_base",
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": 9.0,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "iles:a/e",
+                "points": [
+                  {
+                    "location": 0.0,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.03,
+                    "value": 7.0,
+                    "derivative": 237.5
+                  },
+                  {
+                    "location": 0.08,
+                    "value": 19.0,
+                    "derivative": 241.66666666666669
+                  },
+                  {
+                    "location": 0.15,
+                    "value": 36.0,
+                    "derivative": 229.41176470588238
+                  },
+                  {
+                    "location": 0.25,
+                    "value": 58.0,
+                    "derivative": 192.0
+                  },
+                  {
+                    "location": 0.4,
+                    "value": 84.0,
+                    "derivative": 148.57142857142858
+                  },
+                  {
+                    "location": 0.6,
+                    "value": 110.0,
+                    "derivative": 100.0
+                  }
+                ]
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": 1.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:noise",
+                  "noise": "iles:a/depth_var",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                },
+                "argument2": 0.3
+              }
+            }
+          }
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "iles:a/spike_raw",
+                "points": [
+                  {
+                    "location": 0.08,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.25,
+                    "value": 8.0,
+                    "derivative": 68.75
+                  },
+                  {
+                    "location": 0.4,
+                    "value": 22.0,
+                    "derivative": 105.71428571428572
+                  },
+                  {
+                    "location": 0.6,
+                    "value": 45.0,
+                    "derivative": 96.0
+                  },
+                  {
+                    "location": 0.9,
+                    "value": 70.0,
+                    "derivative": 60.0
+                  }
+                ]
+              }
+            },
+            "argument2": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "iles:a/e",
+                "points": [
+                  {
+                    "location": 0.0,
+                    "value": 0.15,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.04,
+                    "value": 0.5,
+                    "derivative": 5.666666666666667
+                  },
+                  {
+                    "location": 0.15,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  }
+                ]
+              }
+            }
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "iles:a/keel_raw",
+                "points": [
+                  {
+                    "location": 0.0,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.2,
+                    "value": 12.0,
+                    "derivative": 88.88888888888889
+                  },
+                  {
+                    "location": 0.45,
+                    "value": 40.0,
+                    "derivative": 113.33333333333331
+                  },
+                  {
+                    "location": 0.8,
+                    "value": 80.0,
+                    "derivative": 80.0
+                  }
+                ]
+              }
+            },
+            "argument2": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "iles:a/e",
+                "points": [
+                  {
+                    "location": 0.0,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.06,
+                    "value": 0.4,
+                    "derivative": 4.0
+                  },
+                  {
+                    "location": 0.25,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "argument2": -1.0
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.trozik.iles.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BeardifierMixin",
+    "ChunkGeneratorMixin",
+    "NoiseChunkMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

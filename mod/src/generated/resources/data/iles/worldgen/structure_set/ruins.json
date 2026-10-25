@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "iles:ruins",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 14,
+    "separation": 5,
+    "salt": 81733,
+    "exclusion_zone": {
+      "other_set": "iles:farm",
+      "chunk_count": 4
+    }
+  }
+}

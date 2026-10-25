@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:grove",
+    "minecraft:snowy_slopes",
+    "minecraft:meadow",
+    "minecraft:taiga",
+    "minecraft:snowy_taiga",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_forest",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:stony_peaks",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:plains",
+    "minecraft:savanna_plateau",
+    "minecraft:jagged_peaks",
+    "minecraft:frozen_peaks"
+  ]
+}
